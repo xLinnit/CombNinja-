@@ -1,5 +1,9 @@
-#include "stdio.h"
+#include <stdio.h>
 #include <string.h>
+#include <dirent.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <time.h>
 
 #define OPTIONS 3
 #define HEX 16
@@ -7,6 +11,7 @@
 const char options_label[OPTIONS][18] = {"Domain Classifier", "Combs Joiner", "Hash Fixer"};
 void operations_viewer();
 void logo();
+void get_file();
 
 void hash_fixer(char *comb, int fdes);
 
@@ -23,11 +28,11 @@ int main(int argc, char const *argv[]) {
     }
     while( quit == 0 )  {
     if( option_to_operate[0] == 49 ) {
-      // domain_classifier();
+      
     }else if( option_to_operate[0] == 50 ) {
-      // combs_joiner();
+      
     }else if( option_to_operate[0] == 51 ) {
-      // hash_fixer();
+      
     }else {
       fprintf(stderr, "unable to recognize %c\n", option_to_operate[0]);
     }
