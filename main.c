@@ -20,7 +20,7 @@ void hash_fixer(char *comb, int fdes);
 int main(int argc, char const *argv[]) {
 
     int quit = 0;
-    char option_to_operate[3] = "xxx";
+    char option_to_operate[3] = "xox";
     operations_viewer();
 
     fgets( option_to_operate, sizeof(option_to_operate), stdin );
@@ -43,7 +43,8 @@ int main(int argc, char const *argv[]) {
     return (0);
 }
 void logo() {
-  printf("");
+  printf("[Info]: Read howtouse.txt to know how to use the software");
+  printf("By xLinnit");
 }
 void operations_viewer()    {
   int loop_index = 0;
@@ -52,8 +53,6 @@ void operations_viewer()    {
   }
   printf("%d| to exit", 0);
 }
-
-
 void hash_fixer(char *comb, int fdes)   {
     int r = 0;
     char fixed_comb[256];
