@@ -3,7 +3,7 @@
 
 #define OPTIONS 3
 
-const char options_label[][18] = {"Domain Classifier", "Combs Joiner", "Hash Fixer"};
+const char options_label[OPTIONS][18] = {"Domain Classifier", "Combs Joiner", "Hash Fixer"};
 void operations_viewer();
 void logo();
 
