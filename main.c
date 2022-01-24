@@ -7,6 +7,7 @@ const char options_label[][18] = {"Domain Classifier", "Combs Joiner", "Hash Fix
 void operations_viewer();
 void logo();
 
+
 int main(int argc, char const *argv[]) {
     int quit = 0;
     char option_to_operate[3] = "xxx";
