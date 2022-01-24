@@ -3,6 +3,7 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include <time.h>
 
 #define OPTIONS 3
@@ -19,27 +20,92 @@ void hash_fixer(char *comb, int fdes);
 
 int main(int argc, char const *argv[]) {
 
-    int quit = 0;
+    int quit = 0, get_files = 0;
     char option_to_operate[3] = "xox";
     operations_viewer();
 
     fgets( option_to_operate, sizeof(option_to_operate), stdin );
-    if(strncmp(option_to_operate, 48, 4) == 0)
-    {
-      quit = 1;
-      break;
-    }
-    while( quit == 0 )  {
+
     if( option_to_operate[0] == 49 ) {
       
     }else if( option_to_operate[0] == 50 ) {
       
     }else if( option_to_operate[0] == 51 ) {
       
+    }else if( option_to_operate[0] == 48 )  {
+        quit = 1;
     }else {
       fprintf(stderr, "unable to recognize %c\n", option_to_operate[0]);
+      return (1);
     }
-  }
+
+    if(quit != 1)   {
+        get_files = 0;
+    }else{
+        get_files = 1;
+    }
+
+    time_t t = time(NULL);
+    struct tm *tm = localtime(&t);
+
+    char output_file_name[64];
+    char input_file_name[64];
+
+    FILE *fp;
+    int ch, loop_index = 0;
+    char comb[255];
+
+    printf("\nenter input_file name: ");
+    fgets(input_file_name,sizeof(input_file_name),stdin);
+    input_file_name[strcspn(input_file_name, "\n")] = 0;
+    printf("\n");
+
+    fp = fopen(input_file_name, "r");
+    if( fp == NULL )    {
+        fprintf(stderr,"unable to open %s\n", input_file_name);
+        return (1);
+    }else   {
+        printf("file %s has opened\n", input_file_name);
+    }
+
+    if( option_to_operate[0] == 49 )    {
+
+    }else if( option_to_operate[0] == 50 )  {
+
+    }else if( option_to_operate[0] == 51 )  {
+        sprintf(output_file_name, "%c%s%s", 91,asctime(tm)," -o- hash_fixer.txt");
+        output_file_name[strcspn(output_file_name, "\n")] = 93;
+        output_file_name[strcspn(output_file_name, ":")] = 45;
+        output_file_name[strcspn(output_file_name, ":")] = 45;
+        output_file_name[strcspn(output_file_name, "\n")] = 0;
+    }
+
+    int fdes;
+    fdes = open(output_file_name, O_WRONLY|O_CREAT,S_IRUSR+S_IWUSR+S_IRGRP+S_IROTH);
+
+    while( !feof(fp) )  {
+        int flag = 0;
+
+        while( flag != 1 )  {
+            ch = fgetc(fp);
+
+            if( ch == '\n' && ch != -1 )    {
+                flag = 1;
+                ch = (char) 0;
+            }
+
+            comb[loop_index] = ch;
+            loop_index++;
+        }
+        if( flag == 1 && option_to_operate[0] == 51)    {
+            hash_fixer(comb, fdes);
+        }
+        strcpy(comb, "");
+        loop_index = 0;
+    }
+    fclose(fp);
+    close(fdes);
+
     return (0);
 }
 void logo() {
@@ -49,13 +115,14 @@ void logo() {
 void operations_viewer()    {
   int loop_index = 0;
   for (loop_index = 0; loop_index < OPTIONS; ++loop_index) {
-    printf("%d| %s\n", loop_index + 1, options_label[loop_index]);
+    printf("  %d| %s\n", loop_index + 1, options_label[loop_index]);
   }
-  printf("%d| to exit", 0);
+  printf("  %d| to exit\n\n >", 0);
 }
 void hash_fixer(char *comb, int fdes)   {
-    int r = 0;
+    int r, runs = 0;
     char fixed_comb[256];
+
     char digits[2];
     digits[0] = 47;
     digits[1] = 47;
@@ -85,7 +152,8 @@ void hash_fixer(char *comb, int fdes)   {
         }
         digits[1] = 47;
     }
-    printf("[hash_fixer()] The hash of [%s] has been fixed\n", comb);
+    printf("worked with %s now going to the other file to hex\n", comb);
+    runs++;
     strcpy(fixed_comb, "");
     r = 0;
 }
