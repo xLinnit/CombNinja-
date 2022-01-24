@@ -9,19 +9,22 @@
 #define HEX 16
 
 const char options_label[OPTIONS][18] = {"Domain Classifier", "Combs Joiner", "Hash Fixer"};
+
 void operations_viewer();
 void logo();
-void get_file();
 
+void domain_classifier();
+void combs_joiner();
 void hash_fixer(char *comb, int fdes);
 
 int main(int argc, char const *argv[]) {
+
     int quit = 0;
     char option_to_operate[3] = "xxx";
     operations_viewer();
 
     fgets( option_to_operate, sizeof(option_to_operate), stdin );
-    if(strncmp(guess, 48, 4) == 0)
+    if(strncmp(option_to_operate, 48, 4) == 0)
     {
       quit = 1;
       break;
@@ -42,12 +45,14 @@ int main(int argc, char const *argv[]) {
 void logo() {
   printf("");
 }
-void operations_viewer()  {
+void operations_viewer()    {
   int loop_index = 0;
   for (loop_index = 0; loop_index < OPTIONS; ++loop_index) {
     printf("%d| %s\n", loop_index + 1, options_label[loop_index]);
   }
+  printf("%d| to exit", 0);
 }
+
 
 void hash_fixer(char *comb, int fdes)   {
     int r = 0;
