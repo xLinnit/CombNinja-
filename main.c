@@ -57,11 +57,12 @@ int main(int argc, char const *argv[]) {
         quit = 1;
         break;
     }else {
+        fflush(stdin);
       fprintf(stderr, "[Error] Unable to recognize <%c> please try again. \n\n >> ", option_to_operate[0]);
       option_selected = 0;
       fgets( option_to_operate, sizeof(option_to_operate), stdin );
     }
-
+        fflush(stdin);
     }
 
     if(quit == 1)   {
@@ -126,7 +127,7 @@ int main(int argc, char const *argv[]) {
     }else if( option_to_operate[0] == 50 )  {
 
     }else if( option_to_operate[0] == 51)  {
-        sprintf(output_file_name, "%c%s%s", 91,asctime(tm)," -o- hash_fixer.txt");
+        sprintf(output_file_name, "%c%s%s", 91,asctime(tm)," - HASHFIXER.txt");
         output_file_name[strcspn(output_file_name, "\n")] = 93;
         output_file_name[strcspn(output_file_name, ":")] = 45;
         output_file_name[strcspn(output_file_name, ":")] = 45;
@@ -172,7 +173,7 @@ void logo() {
  printf("   |_____|___|_|_|_|___|_|___|_|_|_|| |__,|\n");
  printf("                                  |___|    \n");
  printf("                    By xLinnit");
- printf("\n\n[Info]: Read <howtouse.txt> to know how to use the software\n");
+ printf("\n\n[Info] Check <readme.md> to know how to use the software.\n");
  printf("\n");
  printf(" Menu :\n");
 }
