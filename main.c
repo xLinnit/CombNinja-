@@ -45,6 +45,7 @@ int main(int argc, char const *argv[]) {
 
     while (option_selected == 0)  {
     if( option_to_operate[0] == 49 ) {
+       printf("[CombNinja] Domain Classifier requires <1> input.txt file");
        option_selected = 1;
       break;
     }else if( option_to_operate[0] == 50 ) {
@@ -116,14 +117,14 @@ int main(int argc, char const *argv[]) {
         input_file_name[strcspn(input_file_name, "\n")] = 0;
         has_opened = 0;
     }else   {
-        printf("[CombNinja] File <%s> has opened.\n", input_file_name);
+        printf("[CombNinja] File <%s> has opened for %s.\n", input_file_name, options_label[option_to_operate[0] - 1]);
         has_opened = 1;
         break;
     }
     fp = fopen(input_file_name, "r");
     }
 
-    if( option_to_operate[0] == 49)    {
+    if(option_to_operate[0] == 49)    {
 
         sprintf(of_gmail_file, "%c%s%s", 91, asctime(tm)," - GMAILPARSED.txt");
         of_gmail_file[strcspn(of_gmail_file, "\n")] = 93;
@@ -161,6 +162,7 @@ int main(int argc, char const *argv[]) {
     }
 
     int fdes,of_gmail, of_yahoo, of_aol, of_hotmail, of_outlook;
+
     if(has_opened == 1 && option_to_operate[0] == 49)   {
 
         of_gmail = open(of_gmail_file, O_WRONLY|O_CREAT,S_IRUSR+S_IWUSR+S_IRGRP+S_IROTH);
@@ -174,7 +176,7 @@ int main(int argc, char const *argv[]) {
     fdes = open(output_file_name, O_WRONLY|O_CREAT,S_IRUSR+S_IWUSR+S_IRGRP+S_IROTH);
     }
 
-    while( !feof(fp) && has_opened == 1)  {
+    while( !feof(fp) && has_opened == 1 && (option_to_operate[0] == 49 || option_to_operate[0] == 51))  {
         int flag = 0;
 
         while( flag != 1 )  {
@@ -196,7 +198,15 @@ int main(int argc, char const *argv[]) {
         strcpy(comb, "");
         loop_index = 0;
     }
-    if(option_to_operate[0] = 51)   {
+    if(option_to_operate[0] == 49)  {
+    fclose(fp);
+    close(of_gmail);
+    close(of_yahoo);
+    close(of_aol);
+    close(of_hotmail);
+    close(of_outlook);
+    }
+    if(option_to_operate[0] == 51)  {
     fclose(fp);
     close(fdes);
     }
@@ -224,6 +234,41 @@ void operations_viewer()    {
   }
     printf(" [%d] | exit\n\n >> ", 0);
 }
+
+void domain_classifier(char *comb, int of_gmail, int of_yahoo, int of_aol, int of_hotmail, int of_outlook) {
+
+    int r, runs = 0;
+    char parsed_comb[256];
+
+    char *ret_gmail, *ret_yahoo, *ret_aol, *ret_hotmail, *ret_outlook;
+
+    ret_gmail = strstr(comb, "@gmail");
+    ret_yahoo = strstr(comb, "@yahoo");
+    ret_aol = strstr(comb, "@aol");
+    ret_hotmail = strstr(comb, "@hotmail");
+    ret_outlook = strstr(comb, "@outlook");
+
+    if(ret_gmail)   {
+        sprintf(parsed_comb, "%s%c", comb, '\n');
+        r = write(ret_gmail, parsed_comb, strlen(parsed_comb));
+    }else if(ret_yahoo) {
+        sprintf(parsed_comb, "%s%c", comb, '\n');
+        r = write(ret_yahoo, parsed_comb, strlen(parsed_comb));
+    }else if(ret_aol)   {
+        sprintf(parsed_comb, "%s%c", comb, '\n');
+        r = write(ret_aol, parsed_comb, strlen(parsed_comb));
+    }else if(ret_hotmail)   {
+        sprintf(parsed_comb, "%s%c", comb, '\n');
+        r = write(ret_hotmail, parsed_comb, strlen(parsed_comb));
+    }else if(ret_outlook)   {
+        sprintf(parsed_comb, "%s%c", comb, '\n');
+        r = write(ret_outlook, parsed_comb, strlen(parsed_comb));
+    }
+    strcpy(parsed_comb, "");
+    r = 0;
+    runs++;
+}
+
 void hash_fixer(char *comb, int fdes)   {
     int r, runs = 0;
     char fixed_comb[256];
