@@ -16,7 +16,7 @@ const char options_label[OPTIONS][18] = {"Domain Classifier", "Combs Joiner", "H
 void operations_viewer();
 void logo();
 
-void domain_classifier(char *comb);
+void domain_classifier(char *comb, int, int, int, int, int);
 void combs_joiner();
 void hash_fixer(char *comb, int fdes);
 
@@ -75,7 +75,8 @@ int main(int argc, char const *argv[]) {
 
     time_t t = time(NULL);
     struct tm *tm = localtime(&t);
-
+    /*stuff used for hexa*/
+    char of_gmail_file[64], of_yahoo_file[64], of_aol_file[64], of_hotmail_file[64], of_outlook_file[64];
     char output_file_name[64];
     char input_file_name[64];
     FILE *fp;
@@ -122,13 +123,37 @@ int main(int argc, char const *argv[]) {
     fp = fopen(input_file_name, "r");
     }
 
+    if( option_to_operate[0] == 49)    {
 
-    if( option_to_operate[0] == 49 )    {
-
+        sprintf(of_gmail_file, "%c%s%s", 91, asctime(tm)," - GMAILPARSED.txt");
+        of_gmail_file[strcspn(of_gmail_file, "\n")] = 93;
+        of_gmail_file[strcspn(of_gmail_file, ":")] = 45;
+        of_gmail_file[strcspn(of_gmail_file, ":")] = 45;
+        of_gmail_file[strcspn(of_gmail_file, "\n")] = 0;
+        sprintf(of_yahoo_file, "%c%s%s", 91, asctime(tm)," - YAHOOPARSED.txt");
+        of_yahoo_file[strcspn(of_yahoo_file, "\n")] = 93;
+        of_yahoo_file[strcspn(of_yahoo_file, ":")] = 45;
+        of_yahoo_file[strcspn(of_yahoo_file, ":")] = 45;
+        of_yahoo_file[strcspn(of_yahoo_file, "\n")] = 0;
+        sprintf(of_aol_file, "%c%s%s", 91, asctime(tm)," - AOLPARSED.txt");
+        of_aol_file[strcspn(of_aol_file, "\n")] = 93;
+        of_aol_file[strcspn(of_aol_file, ":")] = 45;
+        of_aol_file[strcspn(of_aol_file, ":")] = 45;
+        of_aol_file[strcspn(of_aol_file, "\n")] = 0;
+        sprintf(of_hotmail_file, "%c%s%s", 91, asctime(tm)," - HOTMAILPARSED.txt");
+        of_hotmail_file[strcspn(of_hotmail_file, "\n")] = 93;
+        of_hotmail_file[strcspn(of_hotmail_file, ":")] = 45;
+        of_hotmail_file[strcspn(of_hotmail_file, ":")] = 45;
+        of_hotmail_file[strcspn(of_hotmail_file, "\n")] = 0;
+        sprintf(of_outlook_file, "%c%s%s", 91, asctime(tm)," - OUTLOOKPARSED.txt");
+        of_outlook_file[strcspn(of_outlook_file, "\n")] = 93;
+        of_outlook_file[strcspn(of_outlook_file, ":")] = 45;
+        of_outlook_file[strcspn(of_outlook_file, ":")] = 45;
+        of_outlook_file[strcspn(of_outlook_file, "\n")] = 0;
     }else if( option_to_operate[0] == 50 )  {
 
     }else if( option_to_operate[0] == 51)  {
-        sprintf(output_file_name, "%c%s%s", 91,asctime(tm)," - HASHFIXER.txt");
+        sprintf(output_file_name, "%c%s%s", 91, asctime(tm)," - HASHFIXER.txt");
         output_file_name[strcspn(output_file_name, "\n")] = 93;
         output_file_name[strcspn(output_file_name, ":")] = 45;
         output_file_name[strcspn(output_file_name, ":")] = 45;
@@ -136,7 +161,16 @@ int main(int argc, char const *argv[]) {
     }
 
     int fdes,of_gmail, of_yahoo, of_aol, of_hotmail, of_outlook;
-    if(has_opened == 1) {
+    if(has_opened == 1 && option_to_operate[0] == 49)   {
+
+        of_gmail = open(of_gmail_file, O_WRONLY|O_CREAT,S_IRUSR+S_IWUSR+S_IRGRP+S_IROTH);
+        of_yahoo = open(of_yahoo_file, O_WRONLY|O_CREAT,S_IRUSR+S_IWUSR+S_IRGRP+S_IROTH);
+        of_aol = open(of_aol_file, O_WRONLY|O_CREAT,S_IRUSR+S_IWUSR+S_IRGRP+S_IROTH);
+        of_hotmail = open(of_hotmail_file, O_WRONLY|O_CREAT,S_IRUSR+S_IWUSR+S_IRGRP+S_IROTH);
+        of_outlook = open(of_outlook_file, O_WRONLY|O_CREAT,S_IRUSR+S_IWUSR+S_IRGRP+S_IROTH);
+
+    }
+    if(has_opened == 1 && option_to_operate[0] == 51) {
     fdes = open(output_file_name, O_WRONLY|O_CREAT,S_IRUSR+S_IWUSR+S_IRGRP+S_IROTH);
     }
 
@@ -153,14 +187,19 @@ int main(int argc, char const *argv[]) {
             comb[loop_index] = ch;
             loop_index++;
         }
+        if(option_to_operate[0] == 49 && loop_index > 1)    {
+            domain_classifier(comb);
+        }
         if(option_to_operate[0] == 51 && loop_index > 1)    {
             hash_fixer(comb, fdes);
         }
         strcpy(comb, "");
         loop_index = 0;
     }
+    if(option_to_operate[0] = 51)   {
     fclose(fp);
     close(fdes);
+    }
     char goodbye[4] = "xxx";
     printf("[CombNinja] Work is done.");
     fgets(goodbye, sizeof(goodbye), stdin);
