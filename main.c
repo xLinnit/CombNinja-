@@ -117,7 +117,7 @@ int main(int argc, char const *argv[]) {
         input_file_name[strcspn(input_file_name, "\n")] = 0;
         has_opened = 0;
     }else   {
-        printf("[CombNinja] File <%s> has opened for %s.\n", input_file_name, options_label[option_to_operate[0] - 1]);
+        printf("[CombNinja] File <%s> has opened for.\n", input_file_name);
         has_opened = 1;
         break;
     }
@@ -182,28 +182,33 @@ int main(int argc, char const *argv[]) {
     fdes = open(output_file_name, O_WRONLY|O_CREAT,S_IRUSR+S_IWUSR+S_IRGRP+S_IROTH);
     }
 
-    while( !feof(fp) && has_opened == 1 && (option_to_operate[0] == 49 || option_to_operate[0] == 51))  {
+    while( !feof(fp) && has_opened == 1)  {
         int flag = 0;
-
+        printf("entered while feof !!\n");
         while( flag != 1 )  {
+            printf("entered while if !!\n");
             ch = fgetc(fp);
 
             if( ch == '\n' || ch == -1 )    {
+                printf("entered if flaggg !!\n");
                 flag = 1;
                 ch = (char) 0;
             }
             comb[loop_index] = ch;
             loop_index++;
         }
-        if(option_to_operate[0] == 49 && loop_index > 1)    {
-            domain_classifier(comb);
+        if(option_to_operate[0] == 49)    {
+            printf("entered if function !!\n");
+            domain_classifier(comb, of_gmail, of_yahoo, of_aol, of_hotmail, of_outlook, of_else);
         }
         if(option_to_operate[0] == 51 && loop_index > 1)    {
             hash_fixer(comb, fdes);
         }
         strcpy(comb, "");
         loop_index = 0;
+        printf("left fun !!\n");
     }
+    printf("left feof while !!\n");
     if(option_to_operate[0] == 49)  {
     fclose(fp);
     close(of_gmail);
@@ -212,6 +217,7 @@ int main(int argc, char const *argv[]) {
     close(of_hotmail);
     close(of_outlook);
     close(of_else);
+    printf("hiiii !!\n");
     }
     if(option_to_operate[0] == 51)  {
     fclose(fp);
@@ -243,11 +249,12 @@ void operations_viewer()    {
 }
 
 void domain_classifier(char *comb, int of_gmail, int of_yahoo, int of_aol, int of_hotmail, int of_outlook, int of_else) {
-
-    int r, runs = 0;
+    printf("hello!");
+    int runs = 0;
     char parsed_comb[256];
 
     char *ret_gmail, *ret_yahoo, *ret_aol, *ret_hotmail, *ret_outlook;
+    int r_google, r_yahoo, r_aol, r_hotmail, r_outlook, r_else;
 
     ret_gmail = strstr(comb, "@gmail");
     ret_yahoo = strstr(comb, "@yahoo");
@@ -257,35 +264,35 @@ void domain_classifier(char *comb, int of_gmail, int of_yahoo, int of_aol, int o
 
     if(ret_gmail)   {
         sprintf(parsed_comb, "%s%c", comb, '\n');
-        r = write(of_gmail, parsed_comb, strlen(parsed_comb));
+        r_google = write(of_gmail, parsed_comb, strlen(parsed_comb));
+        r_google = 0;
     }else if(ret_yahoo) {
         sprintf(parsed_comb, "%s%c", comb, '\n');
-        r = write(of_yahoo, parsed_comb, strlen(parsed_comb));
+        r_yahoo = write(of_yahoo, parsed_comb, strlen(parsed_comb));
+        r_yahoo = 0;
     }else if(ret_aol)   {
         sprintf(parsed_comb, "%s%c", comb, '\n');
-        r = write(of_aol, parsed_comb, strlen(parsed_comb));
+        r_aol = write(of_aol, parsed_comb, strlen(parsed_comb));
+        r_aol = 0;
     }else if(ret_hotmail)   {
         sprintf(parsed_comb, "%s%c", comb, '\n');
-        r = write(of_hotmail, parsed_comb, strlen(parsed_comb));
+        r_hotmail = write(of_hotmail, parsed_comb, strlen(parsed_comb));
+        r_hotmail = 0;
     }else if(ret_outlook)   {
         sprintf(parsed_comb, "%s%c", comb, '\n');
-        r = write(of_outlook, parsed_comb, strlen(parsed_comb));
+        r_outlook = write(of_outlook, parsed_comb, strlen(parsed_comb));
+        r_outlook = 0;
     }else {
         sprintf(parsed_comb, "%s%c", comb, '\n');
-        r = write(of_outlook, parsed_comb, strlen(parsed_comb));
+        r_else = write(of_else, parsed_comb, strlen(parsed_comb));
+        r_else = 0;
     }
 
     strcpy(parsed_comb, "");
 
-    strcpy(ret_gmail,"");
-    strcpy(ret_yahoo,"");
-    strcpy(ret_aol,"");
-    strcpy(ret_hotmail,"");
-    strcpy(ret_outlook,"");
-
-    r = 0;
     runs++;
-    printf("i have classified %s kids stuff!! %d\n", comb,runs);
+    printf("i have classified %s kids stuff!! %d\n", comb, runs);
+
 }
 
 void hash_fixer(char *comb, int fdes)   {
