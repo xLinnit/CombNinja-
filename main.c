@@ -5,6 +5,8 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <time.h>
+// #include <fcntl.h>
+// #include <io.h>
 
 #define OPTIONS 3
 #define HEX 16
@@ -19,7 +21,7 @@ void combs_joiner();
 void hash_fixer(char *comb, int fdes);
 
 int main(int argc, char const *argv[]) {
-
+    logo();
 /***/
     DIR *program_folder;
     struct dirent *entry;
@@ -27,30 +29,37 @@ int main(int argc, char const *argv[]) {
 
     program_folder = opendir(".");
     if(program_folder == NULL)  {
-        perror("Unable to read directory");
+        perror("[Error] Unable to read directory.");
         return(1);
     }
 /***/
-    int quit = 0, get_files = 0;
+    int quit = 0, get_files = 0, option_selected = 0;
     char option_to_operate[3] = "xox";
     operations_viewer();
-
     fgets( option_to_operate, sizeof(option_to_operate), stdin );
-
+    while (option_selected == 0)  {
     if( option_to_operate[0] == 49 ) {
-      
+       option_selected = 1;
+      break;
     }else if( option_to_operate[0] == 50 ) {
-      
+      option_selected = 1;
+      break;
     }else if( option_to_operate[0] == 51 ) {
-      
+      option_selected = 1;
+      break;
     }else if( option_to_operate[0] == 48 )  {
+        option_selected = 1;
         quit = 1;
+        break;
     }else {
-      fprintf(stderr, "unable to recognize %c\n", option_to_operate[0]);
-      return (1);
+      fprintf(stderr, "[Error] Unable to recognize <%c> please try again. \n\n >> ", option_to_operate[0]);
+      option_selected = 0;
+      fgets( option_to_operate, sizeof(option_to_operate), stdin );
     }
 
-    if(quit != 1)   {
+    }
+
+    if(quit == 1)   {
         get_files = 0;
     }else{
         get_files = 1;
@@ -65,7 +74,8 @@ int main(int argc, char const *argv[]) {
     FILE *fp;
     int ch, loop_index = 0;
     char comb[255];
-    printf("files detected ->");
+    if(get_files == 1)  {
+    printf("[CombNinja] I have detected these files:\n");
     while( (entry=readdir(program_folder)) )    {
 
         stat(entry->d_name,&filestat);
@@ -77,24 +87,36 @@ int main(int argc, char const *argv[]) {
     closedir(program_folder);
     /***************************************************/
 
-    printf("\nenter input_file name: ");
+    printf("[CombNinja] please enter the file name >> ");
     fgets(input_file_name,sizeof(input_file_name),stdin);
     input_file_name[strcspn(input_file_name, "\n")] = 0;
-    printf("\n");
-
-    fp = fopen(input_file_name, "r");
-    if( fp == NULL )    {
-        fprintf(stderr,"unable to open %s\n", input_file_name);
-        return (1);
-    }else   {
-        printf("file %s has opened\n", input_file_name);
     }
+    printf("\n");
+    int has_opened = 0;
+    fp = fopen(input_file_name, "r");
+    while(has_opened == 0 && get_files == 1)  {
+
+    if( fp == NULL )    {
+        fprintf(stderr,"[Error] Unable to open <%s> \n<!> Make sure to include file name and its extention <example.txt> <!>", input_file_name);
+        fflush(stdin);
+        printf("[CombNinja] please enter the file name >> ");
+        fgets(input_file_name,sizeof(input_file_name),stdin);
+        input_file_name[strcspn(input_file_name, "\n")] = 0;
+        has_opened = 0;
+    }else   {
+        printf("[CombNinja] File <%s> has opened.\n", input_file_name);
+        has_opened = 1;
+        break;
+    }
+    fp = fopen(input_file_name, "r");
+    }
+
 
     if( option_to_operate[0] == 49 )    {
 
     }else if( option_to_operate[0] == 50 )  {
 
-    }else if( option_to_operate[0] == 51 )  {
+    }else if( option_to_operate[0] == 51)  {
         sprintf(output_file_name, "%c%s%s", 91,asctime(tm)," -o- hash_fixer.txt");
         output_file_name[strcspn(output_file_name, "\n")] = 93;
         output_file_name[strcspn(output_file_name, ":")] = 45;
@@ -103,9 +125,11 @@ int main(int argc, char const *argv[]) {
     }
 
     int fdes,of_gmail, of_yahoo, of_aol, of_hotmail, of_outlook;
+    if(has_opened == 1) {
     fdes = open(output_file_name, O_WRONLY|O_CREAT,S_IRUSR+S_IWUSR+S_IRGRP+S_IROTH);
+    }
 
-    while( !feof(fp) )  {
+    while( !feof(fp) && has_opened == 1)  {
         int flag = 0;
 
         while( flag != 1 )  {
@@ -130,15 +154,23 @@ int main(int argc, char const *argv[]) {
     return (0);
 }
 void logo() {
-  printf("[Info]: Read howtouse.txt to know how to use the software");
-  printf("By xLinnit");
+
+ printf("    _____           _   _____ _      _     \n");
+ printf("   |     |___ _____| |_|   | |_|___ |_|___ \n");
+ printf("   |   --| . |     | . | | | | |   || | .'|\n");
+ printf("   |_____|___|_|_|_|___|_|___|_|_|_|| |__,|\n");
+ printf("                                  |___|    \n");
+ printf("                    By xLinnit");
+ printf("\n\n[Info]: Read <howtouse.txt> to know how to use the software\n");
+ printf("\n");
+ printf(" Menu :\n");
 }
 void operations_viewer()    {
   int loop_index = 0;
   for (loop_index = 0; loop_index < OPTIONS; ++loop_index) {
-    printf("  %d| %s\n", loop_index + 1, options_label[loop_index]);
+    printf(" [%d] | %s\n", loop_index + 1, options_label[loop_index]);
   }
-  printf("  %d| to exit\n\n >", 0);
+    printf(" [%d] | exit\n\n >> ", 0);
 }
 void hash_fixer(char *comb, int fdes)   {
     int r, runs = 0;
