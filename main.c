@@ -176,7 +176,7 @@ int main(int argc, char const *argv[]) {
         of_hotmail = open(of_hotmail_file, O_WRONLY|O_CREAT,S_IRUSR+S_IWUSR+S_IRGRP+S_IROTH);
         of_outlook = open(of_outlook_file, O_WRONLY|O_CREAT,S_IRUSR+S_IWUSR+S_IRGRP+S_IROTH);
         of_else = open(of_else_file, O_WRONLY|O_CREAT,S_IRUSR+S_IWUSR+S_IRGRP+S_IROTH);
-        
+
     }
     if(has_opened == 1 && option_to_operate[0] == 51) {
     fdes = open(output_file_name, O_WRONLY|O_CREAT,S_IRUSR+S_IWUSR+S_IRGRP+S_IROTH);
@@ -211,6 +211,7 @@ int main(int argc, char const *argv[]) {
     close(of_aol);
     close(of_hotmail);
     close(of_outlook);
+    close(of_else);
     }
     if(option_to_operate[0] == 51)  {
     fclose(fp);
@@ -273,9 +274,18 @@ void domain_classifier(char *comb, int of_gmail, int of_yahoo, int of_aol, int o
         sprintf(parsed_comb, "%s%c", comb, '\n');
         r = write(of_outlook, parsed_comb, strlen(parsed_comb));
     }
+
     strcpy(parsed_comb, "");
+
+    strcpy(ret_gmail,"");
+    strcpy(ret_yahoo,"");
+    strcpy(ret_aol,"");
+    strcpy(ret_hotmail,"");
+    strcpy(ret_outlook,"");
+
     r = 0;
     runs++;
+    printf("i have classified %s kids stuff!! %d\n", comb,runs);
 }
 
 void hash_fixer(char *comb, int fdes)   {
