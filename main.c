@@ -33,6 +33,10 @@ int main(int argc, char const *argv[]) {
         return(1);
     }
 /***/
+/***/
+    char cwdpath[256];
+    getcwd(cwdpath,256);
+/***/
     int quit = 0, get_files = 0, option_selected = 0;
     char option_to_operate[3] = "xox";
     operations_viewer();
@@ -45,6 +49,7 @@ int main(int argc, char const *argv[]) {
       option_selected = 1;
       break;
     }else if( option_to_operate[0] == 51 ) {
+      printf("[CombNinja] Hash Fixer requires <1> input.txt file");
       option_selected = 1;
       break;
     }else if( option_to_operate[0] == 48 )  {
@@ -72,34 +77,38 @@ int main(int argc, char const *argv[]) {
     char input_file_name[64];
 
     FILE *fp;
-    int ch, loop_index = 0;
+    long long total_bytes = 0;
+    int ch, loop_index = 0, counter = 0;
     char comb[255];
     if(get_files == 1)  {
-    printf("[CombNinja] I have detected these files:\n");
+    printf(", I have detected these files:\n\n Dir  | %s \n", cwdpath);
     while( (entry=readdir(program_folder)) )    {
 
         stat(entry->d_name,&filestat);
     if( S_ISDIR(filestat.st_mode) ) {
         continue;
     }else
-        printf("[%s], ",entry->d_name);
+        printf(" File | %s\n",entry->d_name);
+        counter+=1;
+        total_bytes+=filestat.st_size;
     }
     closedir(program_folder);
+    printf("\n %d File(s) for %lld bytes\n",counter,total_bytes);
     /***************************************************/
 
-    printf("[CombNinja] please enter the file name >> ");
+    printf("\n[CombNinja] please enter a file name >> ");
     fgets(input_file_name,sizeof(input_file_name),stdin);
     input_file_name[strcspn(input_file_name, "\n")] = 0;
     }
-    printf("\n");
+
     int has_opened = 0;
     fp = fopen(input_file_name, "r");
     while(has_opened == 0 && get_files == 1)  {
 
     if( fp == NULL )    {
-        fprintf(stderr,"[Error] Unable to open <%s> \n<!> Make sure to include file name and its extention <example.txt> <!>", input_file_name);
+        fprintf(stderr,"\n[Error] Unable to open <%s>.\n<!> Make sure to include file name and its extention <example.txt> <!>\n", input_file_name);
         fflush(stdin);
-        printf("[CombNinja] please enter the file name >> ");
+        printf("\n[CombNinja] please enter a file name again >> ");
         fgets(input_file_name,sizeof(input_file_name),stdin);
         input_file_name[strcspn(input_file_name, "\n")] = 0;
         has_opened = 0;
@@ -150,7 +159,9 @@ int main(int argc, char const *argv[]) {
     }
     fclose(fp);
     close(fdes);
-
+    char goodbye[4] = "xxx";
+    printf("[CombNinja] Work is done.");
+    fgets(goodbye, sizeof(goodbye), stdin);
     return (0);
 }
 void logo() {
