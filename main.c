@@ -124,7 +124,7 @@ int main(int argc, char const *argv[]) {
     fp = fopen(input_file_name, "r");
     }
 
-    if(option_to_operate[0] == 49)    {
+    if(option_to_operate[0] == 49 && has_opened == 1)    {
 
         sprintf(of_gmail_file, "%c%s%s", 91, asctime(tm)," - GMAILPARSED.txt");
         of_gmail_file[strcspn(of_gmail_file, "\n")] = 93;
@@ -158,7 +158,7 @@ int main(int argc, char const *argv[]) {
         of_else_file[strcspn(of_else_file, "\n")] = 0;
     }else if( option_to_operate[0] == 50 )  {
 
-    }else if( option_to_operate[0] == 51)  {
+    }else if(option_to_operate[0] == 51 && has_opened == 1)  {
         sprintf(output_file_name, "%c%s%s", 91, asctime(tm)," - HASHFIXER.txt");
         output_file_name[strcspn(output_file_name, "\n")] = 93;
         output_file_name[strcspn(output_file_name, ":")] = 45;
