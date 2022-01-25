@@ -117,7 +117,7 @@ int main(int argc, char const *argv[]) {
         input_file_name[strcspn(input_file_name, "\n")] = 0;
         has_opened = 0;
     }else   {
-        printf("[CombNinja] File <%s> has opened for %s.\n", input_file_name, options_label[convert_to_index]);
+        printf("[CombNinja] File <%s> has opened for *%s*.\n", input_file_name, options_label[convert_to_index]);
         has_opened = 1;
         break;
     }
