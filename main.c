@@ -16,7 +16,7 @@ const char options_label[OPTIONS][18] = {"Domain Classifier", "Combs Joiner", "H
 void operations_viewer();
 void logo();
 
-void domain_classifier(char *comb, int, int, int, int, int);
+void domain_classifier(char *comb, int, int, int, int, int, int);
 void combs_joiner();
 void hash_fixer(char *comb, int fdes);
 
@@ -77,7 +77,7 @@ int main(int argc, char const *argv[]) {
     time_t t = time(NULL);
     struct tm *tm = localtime(&t);
     /*stuff used for hexa*/
-    char of_gmail_file[64], of_yahoo_file[64], of_aol_file[64], of_hotmail_file[64], of_outlook_file[64];
+    char of_gmail_file[64], of_yahoo_file[64], of_aol_file[64], of_hotmail_file[64], of_outlook_file[64], of_else_file[64];
     char output_file_name[64];
     char input_file_name[64];
     FILE *fp;
@@ -151,6 +151,11 @@ int main(int argc, char const *argv[]) {
         of_outlook_file[strcspn(of_outlook_file, ":")] = 45;
         of_outlook_file[strcspn(of_outlook_file, ":")] = 45;
         of_outlook_file[strcspn(of_outlook_file, "\n")] = 0;
+        sprintf(of_else_file, "%c%s%s", 91, asctime(tm)," - ELSEPARSED.txt");
+        of_else_file[strcspn(of_else_file, "\n")] = 93;
+        of_else_file[strcspn(of_else_file, ":")] = 45;
+        of_else_file[strcspn(of_else_file, ":")] = 45;
+        of_else_file[strcspn(of_else_file, "\n")] = 0;
     }else if( option_to_operate[0] == 50 )  {
 
     }else if( option_to_operate[0] == 51)  {
@@ -161,7 +166,7 @@ int main(int argc, char const *argv[]) {
         output_file_name[strcspn(output_file_name, "\n")] = 0;
     }
 
-    int fdes,of_gmail, of_yahoo, of_aol, of_hotmail, of_outlook;
+    int fdes,of_gmail, of_yahoo, of_aol, of_hotmail, of_outlook, of_else;
 
     if(has_opened == 1 && option_to_operate[0] == 49)   {
 
@@ -170,7 +175,8 @@ int main(int argc, char const *argv[]) {
         of_aol = open(of_aol_file, O_WRONLY|O_CREAT,S_IRUSR+S_IWUSR+S_IRGRP+S_IROTH);
         of_hotmail = open(of_hotmail_file, O_WRONLY|O_CREAT,S_IRUSR+S_IWUSR+S_IRGRP+S_IROTH);
         of_outlook = open(of_outlook_file, O_WRONLY|O_CREAT,S_IRUSR+S_IWUSR+S_IRGRP+S_IROTH);
-
+        of_else = open(of_else_file, O_WRONLY|O_CREAT,S_IRUSR+S_IWUSR+S_IRGRP+S_IROTH);
+        
     }
     if(has_opened == 1 && option_to_operate[0] == 51) {
     fdes = open(output_file_name, O_WRONLY|O_CREAT,S_IRUSR+S_IWUSR+S_IRGRP+S_IROTH);
@@ -235,7 +241,7 @@ void operations_viewer()    {
     printf(" [%d] | exit\n\n >> ", 0);
 }
 
-void domain_classifier(char *comb, int of_gmail, int of_yahoo, int of_aol, int of_hotmail, int of_outlook) {
+void domain_classifier(char *comb, int of_gmail, int of_yahoo, int of_aol, int of_hotmail, int of_outlook, int of_else) {
 
     int r, runs = 0;
     char parsed_comb[256];
@@ -250,19 +256,22 @@ void domain_classifier(char *comb, int of_gmail, int of_yahoo, int of_aol, int o
 
     if(ret_gmail)   {
         sprintf(parsed_comb, "%s%c", comb, '\n');
-        r = write(ret_gmail, parsed_comb, strlen(parsed_comb));
+        r = write(of_gmail, parsed_comb, strlen(parsed_comb));
     }else if(ret_yahoo) {
         sprintf(parsed_comb, "%s%c", comb, '\n');
-        r = write(ret_yahoo, parsed_comb, strlen(parsed_comb));
+        r = write(of_yahoo, parsed_comb, strlen(parsed_comb));
     }else if(ret_aol)   {
         sprintf(parsed_comb, "%s%c", comb, '\n');
-        r = write(ret_aol, parsed_comb, strlen(parsed_comb));
+        r = write(of_aol, parsed_comb, strlen(parsed_comb));
     }else if(ret_hotmail)   {
         sprintf(parsed_comb, "%s%c", comb, '\n');
-        r = write(ret_hotmail, parsed_comb, strlen(parsed_comb));
+        r = write(of_hotmail, parsed_comb, strlen(parsed_comb));
     }else if(ret_outlook)   {
         sprintf(parsed_comb, "%s%c", comb, '\n');
-        r = write(ret_outlook, parsed_comb, strlen(parsed_comb));
+        r = write(of_outlook, parsed_comb, strlen(parsed_comb));
+    }else {
+        sprintf(parsed_comb, "%s%c", comb, '\n');
+        r = write(of_outlook, parsed_comb, strlen(parsed_comb));
     }
     strcpy(parsed_comb, "");
     r = 0;
