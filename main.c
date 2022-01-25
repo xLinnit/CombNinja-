@@ -14,12 +14,23 @@ const char options_label[OPTIONS][18] = {"Domain Classifier", "Combs Joiner", "H
 void operations_viewer();
 void logo();
 
-void domain_classifier();
+void domain_classifier(char *comb);
 void combs_joiner();
 void hash_fixer(char *comb, int fdes);
 
 int main(int argc, char const *argv[]) {
 
+/***/
+    DIR *program_folder;
+    struct dirent *entry;
+    struct stat filestat;
+
+    program_folder = opendir(".");
+    if(program_folder == NULL)  {
+        perror("Unable to read directory");
+        return(1);
+    }
+/***/
     int quit = 0, get_files = 0;
     char option_to_operate[3] = "xox";
     operations_viewer();
@@ -54,6 +65,17 @@ int main(int argc, char const *argv[]) {
     FILE *fp;
     int ch, loop_index = 0;
     char comb[255];
+    printf("files detected ->");
+    while( (entry=readdir(program_folder)) )    {
+
+        stat(entry->d_name,&filestat);
+    if( S_ISDIR(filestat.st_mode) ) {
+        continue;
+    }else
+        printf("[%s], ",entry->d_name);
+    }
+    closedir(program_folder);
+    /***************************************************/
 
     printf("\nenter input_file name: ");
     fgets(input_file_name,sizeof(input_file_name),stdin);
@@ -80,7 +102,7 @@ int main(int argc, char const *argv[]) {
         output_file_name[strcspn(output_file_name, "\n")] = 0;
     }
 
-    int fdes;
+    int fdes,of_gmail, of_yahoo, of_aol, of_hotmail, of_outlook;
     fdes = open(output_file_name, O_WRONLY|O_CREAT,S_IRUSR+S_IWUSR+S_IRGRP+S_IROTH);
 
     while( !feof(fp) )  {
@@ -89,15 +111,14 @@ int main(int argc, char const *argv[]) {
         while( flag != 1 )  {
             ch = fgetc(fp);
 
-            if( ch == '\n' && ch != -1 )    {
+            if( ch == '\n' || ch == -1 )    {
                 flag = 1;
                 ch = (char) 0;
             }
-
             comb[loop_index] = ch;
             loop_index++;
         }
-        if( flag == 1 && option_to_operate[0] == 51)    {
+        if(option_to_operate[0] == 51 && loop_index > 1)    {
             hash_fixer(comb, fdes);
         }
         strcpy(comb, "");
