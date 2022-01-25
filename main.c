@@ -22,7 +22,8 @@ void hash_fixer(char *comb, int fdes);
 
 int main(int argc, char const *argv[]) {
     logo();
-/***/
+    
+ /***/
     DIR *program_folder;
     struct dirent *entry;
     struct stat filestat;
@@ -32,15 +33,16 @@ int main(int argc, char const *argv[]) {
         perror("[Error] Unable to read directory.");
         return(1);
     }
-/***/
-/***/
     char cwdpath[256];
     getcwd(cwdpath,256);
 /***/
+
     int quit = 0, get_files = 0, option_selected = 0;
     char option_to_operate[3] = "xox";
+
     operations_viewer();
     fgets( option_to_operate, sizeof(option_to_operate), stdin );
+
     while (option_selected == 0)  {
     if( option_to_operate[0] == 49 ) {
        option_selected = 1;
@@ -57,7 +59,7 @@ int main(int argc, char const *argv[]) {
         quit = 1;
         break;
     }else {
-        fflush(stdin);
+      fflush(stdin);
       fprintf(stderr, "[Error] Unable to recognize <%c> please try again. \n\n >> ", option_to_operate[0]);
       option_selected = 0;
       fgets( option_to_operate, sizeof(option_to_operate), stdin );
@@ -76,11 +78,11 @@ int main(int argc, char const *argv[]) {
 
     char output_file_name[64];
     char input_file_name[64];
-
     FILE *fp;
     long long total_bytes = 0;
     int ch, loop_index = 0, counter = 0;
     char comb[255];
+
     if(get_files == 1)  {
     printf(", I have detected these files:\n\n Dir  | %s \n", cwdpath);
     while( (entry=readdir(program_folder)) )    {
@@ -95,8 +97,7 @@ int main(int argc, char const *argv[]) {
     }
     closedir(program_folder);
     printf("\n %d File(s) for %lld bytes\n",counter,total_bytes);
-    /***************************************************/
-
+    
     printf("\n[CombNinja] please enter a file name >> ");
     fgets(input_file_name,sizeof(input_file_name),stdin);
     input_file_name[strcspn(input_file_name, "\n")] = 0;
