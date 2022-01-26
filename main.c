@@ -158,9 +158,7 @@ int main(int argc, char const *argv[]) {
         of_else_file[strcspn(of_else_file, ":")] = 45;
         of_else_file[strcspn(of_else_file, ":")] = 45;
         of_else_file[strcspn(of_else_file, "\n")] = 0;
-    }else if( option_to_operate[0] == 50 )  {
-
-    }else if(option_to_operate[0] == 51 && has_opened == 1)  {
+    } else if(option_to_operate[0] == 51 && has_opened == 1)  {
         sprintf(output_file_name, "%c%s%s", 91, asctime(tm)," - HASHFIXER.txt");
         output_file_name[strcspn(output_file_name, "\n")] = 93;
         output_file_name[strcspn(output_file_name, ":")] = 45;
@@ -335,7 +333,7 @@ void domain_classifier(char *comb, int of_gmail, int of_yahoo, int of_aol, int o
     strcpy(parsed_comb, "");
     runs++;
 }
-
+/**This might be not useful for others but I made it cuz I needed it back then =D*/
 void hash_fixer(char *comb, int fdes)   {
     int r, runs = 0;
     char fixed_comb[256];
