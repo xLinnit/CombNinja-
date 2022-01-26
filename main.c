@@ -17,7 +17,7 @@ void operations_viewer();
 void logo();
 
 void domain_classifier(char *comb, int, int, int, int, int, int);
-void combs_joiner();
+void combs_joiner(char *comb, int);
 void hash_fixer(char *comb, int fdes);
 
 int main(int argc, char const *argv[]) {
@@ -37,7 +37,7 @@ int main(int argc, char const *argv[]) {
     getcwd(cwdpath,256);
 /***/
 
-    int quit = 0, get_files = 0, option_selected = 0;
+    int quit = 0, get_files = 0, option_selected = 0, joiner = 0;
     char option_to_operate[3] = "xox";
 
     operations_viewer();
@@ -49,7 +49,9 @@ int main(int argc, char const *argv[]) {
        option_selected = 1;
       break;
     }else if( option_to_operate[0] == 50 ) {
+      printf("[CombNinja] Combs Joiner requires at least <2> input.txt files");
       option_selected = 1;
+      joiner = 1;
       break;
     }else if( option_to_operate[0] == 51 ) {
       printf("[CombNinja] Hash Fixer requires <1> input.txt file");
@@ -85,7 +87,7 @@ int main(int argc, char const *argv[]) {
     int ch, loop_index = 0, counter = 0;
     char comb[255];
 
-    if(get_files == 1)  {
+    if(get_files == 1 && joiner == 0)  {
     printf(", I have detected these files:\n\n Dir  | %s \n", cwdpath);
     while( (entry=readdir(program_folder)) )    {
 
@@ -107,7 +109,7 @@ int main(int argc, char const *argv[]) {
     int convert_to_index = option_to_operate[0] - 49;
     int has_opened = 0;
     fp = fopen(input_file_name, "r");
-    while(has_opened == 0 && get_files == 1)  {
+    while(has_opened == 0 && get_files == 1 && joiner == 0)  {
 
     if( fp == NULL )    {
         fprintf(stderr,"\n[Error] Unable to open <%s>.\n<!> Make sure to include file name and its extention <example.txt> <!>\n", input_file_name);
@@ -117,7 +119,7 @@ int main(int argc, char const *argv[]) {
         input_file_name[strcspn(input_file_name, "\n")] = 0;
         has_opened = 0;
     }else   {
-        printf("[CombNinja] File <%s> has opened for *%s*.\n", input_file_name, options_label[convert_to_index]);
+        printf("[CombNinja] File <%s> has opened for ~%s.\n", input_file_name, options_label[convert_to_index]);
         has_opened = 1;
         break;
     }
@@ -216,8 +218,58 @@ int main(int argc, char const *argv[]) {
     fclose(fp);
     close(fdes);
     }
+
+    /*joiner start*/
+    int num_to_join = 0;
+    if(option_to_operate[0] == 50 && joiner == 1)   {
+    printf(", I have detected these files:\n\n Dir  | %s \n", cwdpath);
+    while( (entry=readdir(program_folder)) )    {
+
+        stat(entry->d_name,&filestat);
+    if( S_ISDIR(filestat.st_mode) ) {
+        continue;
+    }else
+        printf(" File | %s\n",entry->d_name);
+        counter+=1;
+        total_bytes+=filestat.st_size;
+    }
+    closedir(program_folder);
+    printf("\n %d File(s) for %lld bytes\n",counter,total_bytes);
+    printf("[CombNinja] Enter the number of files you wish to work on *n>=2*: ");
+    scanf("%d", &num_to_join);
+    while(num_to_join == 1 || num_to_join <= 0)    {
+        printf("[CombNinja] The number of files should be at least <2> or more. Try again: ");
+        num_to_join = 0;
+        scanf("%d", &num_to_join);
+        printf("\n");
+    }
+    printf("\n[CombNinja] You have selected <%d> files", num_to_join);
+    }
+
+    char joiner_files_name[num_to_join][30];
+    int while_loop_index = 0, file_joiner_number_per = 0;
+
+    if(joiner == 1)
+        printf("[CombNinja] Enter Files names");
+
+    while(joiner == 1 && while_loop_index < num_to_join)    {
+        file_joiner_number_per = while_loop_index + 1;
+        printf("\n File ~%d >> ", file_joiner_number_per);
+        scanf("%s",joiner_files_name[while_loop_index]);
+        fp = fopen(joiner_files_name[while_loop_index], "r");
+        if(fp == NULL)  {
+            fprintf(stderr,"\n[Error] Unable to open <%s>.\n<!> Make sure to include file name and its extention <example.txt> <!>\n", joiner_files_name[while_loop_index]);
+            continue;
+        }else{
+        while_loop_index = while_loop_index + 1;
+        }
+    }
+
+    /*joiner ends*/
     char goodbye[4] = "xxx";
-    printf("[CombNinja] Work is done.");
+    printf("\n[CombNinja] Work is done. See you soon!");
+    fgets(goodbye, sizeof(goodbye), stdin);
+    fgets(goodbye, sizeof(goodbye), stdin);
     fgets(goodbye, sizeof(goodbye), stdin);
     return (0);
 }
