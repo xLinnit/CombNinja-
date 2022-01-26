@@ -253,7 +253,8 @@ int main(int argc, char const *argv[]) {
     while(joiner == 1 && while_loop_index < num_to_join)    {
         file_joiner_number_per = while_loop_index + 1;
         printf("\n File ~%d >> ", file_joiner_number_per);
-        scanf("%s",joiner_files_name[while_loop_index]);
+        fgets(joiner_files_name[while_loop_index], sizeof(joiner_files_name[while_loop_index]), stdin);
+        joiner_files_name[while_loop_index][strcspn(joiner_files_name[while_loop_index], "\n")] = 0;
         fp = fopen(joiner_files_name[while_loop_index], "r");
         if(fp == NULL)  {
             fprintf(stderr,"\n[Error] Unable to open <%s>.\n<!> Make sure to include file name and its extention <example.txt> <!>\n", joiner_files_name[while_loop_index]);
