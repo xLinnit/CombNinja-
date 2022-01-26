@@ -79,6 +79,7 @@ int main(int argc, char const *argv[]) {
     time_t t = time(NULL);
     struct tm *tm = localtime(&t);
     /*stuff used for hexa*/
+    char of_joiner_file[64];//joiner
     char of_gmail_file[64], of_yahoo_file[64], of_aol_file[64], of_hotmail_file[64], of_outlook_file[64], of_else_file[64];
     char output_file_name[64];
     char input_file_name[64];
@@ -164,9 +165,15 @@ int main(int argc, char const *argv[]) {
         output_file_name[strcspn(output_file_name, ":")] = 45;
         output_file_name[strcspn(output_file_name, ":")] = 45;
         output_file_name[strcspn(output_file_name, "\n")] = 0;
+    }   else if(option_to_operate[0] == 50) {
+        sprintf(of_joiner_file, "%c%s%s", 91, asctime(tm)," - JOINER.txt");
+        of_joiner_file[strcspn(of_joiner_file, "\n")] = 93;
+        of_joiner_file[strcspn(of_joiner_file, ":")] = 45;
+        of_joiner_file[strcspn(of_joiner_file, ":")] = 45;
+        of_joiner_file[strcspn(of_joiner_file, "\n")] = 0;
     }
 
-    int fdes,of_gmail, of_yahoo, of_aol, of_hotmail, of_outlook, of_else;
+    int fdes,of_gmail, of_yahoo, of_aol, of_hotmail, of_outlook, of_else, fdes_joiner;
 
     if(has_opened == 1 && option_to_operate[0] == 49)   {
 
@@ -181,6 +188,7 @@ int main(int argc, char const *argv[]) {
     if(has_opened == 1 && option_to_operate[0] == 51) {
     fdes = open(output_file_name, O_WRONLY|O_CREAT,S_IRUSR+S_IWUSR+S_IRGRP+S_IROTH);
     }
+
 
     while( !feof(fp) && has_opened == 1 && ( option_to_operate[0] == 51 || option_to_operate[0] == 49))  {
         int flag = 0;
@@ -243,13 +251,13 @@ int main(int argc, char const *argv[]) {
     }
     printf("\n[CombNinja] You have selected <%d> files", num_to_join);
     }
-
+    fflush(stdin);
     char joiner_files_name[num_to_join][30];
     int while_loop_index = 0, file_joiner_number_per = 0;
 
     if(joiner == 1)
-        printf("[CombNinja] Enter Files names");
-
+        printf("\n[CombNinja] Enter Files names");
+    int has_joined_open = 0;
     while(joiner == 1 && while_loop_index < num_to_join)    {
         file_joiner_number_per = while_loop_index + 1;
         printf("\n File ~%d >> ", file_joiner_number_per);
@@ -262,6 +270,38 @@ int main(int argc, char const *argv[]) {
         }else{
         while_loop_index = while_loop_index + 1;
         }
+        has_joined_open = 1;
+    }
+        if(option_to_operate[0] == 50 && has_joined_open == 1)  {
+            fdes_joiner = open(of_joiner_file, O_WRONLY|O_CREAT,S_IRUSR+S_IWUSR+S_IRGRP+S_IROTH);
+        }
+    fp = NULL;
+    char joined_comb[256];
+    while_loop_index = 0;
+    int comb_index_join = 0;
+    int chj, new_line_flag_joined = 0;
+    while(joiner == 1 && while_loop_index < num_to_join && has_joined_open == 1)    {
+
+        fp = fopen(joiner_files_name[while_loop_index], "r");
+        while(!feof(fp))    {
+            comb_index_join = 0;
+            while(new_line_flag_joined != 1)    {
+            chj = fgetc(fp);
+            if( chj == '\n' || chj == -1) {
+                new_line_flag_joined = 1;
+                chj = (char) 0;
+            }
+            joined_comb[comb_index_join] = chj;
+            comb_index_join++;
+            }
+            if(option_to_operate[0] == 50 && comb_index_join > 1)   {
+                combs_joiner(joined_comb, fdes_joiner);
+            }
+            new_line_flag_joined = 0;
+            strcpy(joined_comb, "");
+        }
+        fclose(fp);
+        while_loop_index++;
     }
 
     /*joiner ends*/
@@ -290,6 +330,14 @@ void operations_viewer()    {
     printf(" [%d] | %s\n", loop_index + 1, options_label[loop_index]);
   }
     printf(" [%d] | exit\n\n >> ", 0);
+}
+
+void combs_joiner(char *comb, int feds_of_joiner)   {
+    int r, runs = 0;
+    char joined_comb[256];
+
+    sprintf(joined_comb, "%s%c", comb, '\n');
+    r = write(feds_of_joiner, joined_comb, strlen(joined_comb));
 }
 
 void domain_classifier(char *comb, int of_gmail, int of_yahoo, int of_aol, int of_hotmail, int of_outlook, int of_else) {
