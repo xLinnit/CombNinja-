@@ -300,6 +300,7 @@ int main(int argc, char const *argv[]) {
             new_line_flag_joined = 0;
             strcpy(joined_comb, "");
         }
+        //close(fp);
         fclose(fp);
         while_loop_index++;
     }
