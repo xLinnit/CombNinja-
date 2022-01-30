@@ -212,17 +212,10 @@ int main(int argc, char const *argv[]) {
         loop_index = 0;
     }
     if(option_to_operate[0] == 49)  {
-    fclose(fp);
-    close(of_gmail);
-    close(of_yahoo);
-    close(of_aol);
-    close(of_hotmail);
-    close(of_outlook);
-    close(of_else);
+    fclose(fp); close(of_gmail); close(of_yahoo); close(of_aol); close(of_hotmail); close(of_outlook); close(of_else);
     }
     if(option_to_operate[0] == 51)  {
-    fclose(fp);
-    close(fdes);
+    fclose(fp); close(fdes);
     }
 
     /*joiner start*/
