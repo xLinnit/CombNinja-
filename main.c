@@ -8,10 +8,10 @@
 // #include <fcntl.h>
 // #include <io.h>
 
-#define OPTIONS 3
+#define OPTIONS 4
 #define HEX 16
 
-const char options_label[OPTIONS][18] = {"Domain Classifier", "Combs Joiner", "Hash Fixer"};
+const char options_label[OPTIONS][18] = {"Domain Classifier", "Combs Joiner", "Hash Fixer", "Combs Splitter"};
 
 void operations_viewer();
 void logo();
@@ -19,6 +19,7 @@ void logo();
 void domain_classifier(char *comb, int, int, int, int, int, int);
 void combs_joiner(char *comb, int);
 void hash_fixer(char *comb, int fdes);
+void combs_splitter(char *comb, int fdes);
 
 int main(int argc, char const *argv[]) {
     logo();
@@ -37,7 +38,7 @@ int main(int argc, char const *argv[]) {
     getcwd(cwdpath,256);
 /***/
 
-    int quit = 0, get_files = 0, option_selected = 0, joiner = 0;
+    int quit = 0, get_files = 0, option_selected = 0, joiner = 0, spl = 0;
     char option_to_operate[3] = "xox";
 
     operations_viewer();
@@ -56,6 +57,11 @@ int main(int argc, char const *argv[]) {
     }else if( option_to_operate[0] == 51 ) {
       printf("[CombNinja] Hash Fixer requires <1> input.txt file");
       option_selected = 1;
+      break;
+    }else if( option_to_operate[0] == 52)  {
+      printf("[CombNinja] Combs Splitter requres <1> input.txt file");
+      option_selected = 1;
+      spl = 1;
       break;
     }else if( option_to_operate[0] == 48 )  {
         option_selected = 1;
@@ -78,6 +84,8 @@ int main(int argc, char const *argv[]) {
 
     time_t t = time(NULL);
     struct tm *tm = localtime(&t);
+    /*splitter*/
+    char spl_file_name[64];
     /*stuff used for hexa*/
     char of_joiner_file[64];//joiner
     char of_gmail_file[64], of_yahoo_file[64], of_aol_file[64], of_hotmail_file[64], of_outlook_file[64], of_else_file[64];
@@ -171,9 +179,18 @@ int main(int argc, char const *argv[]) {
         of_joiner_file[strcspn(of_joiner_file, ":")] = 45;
         of_joiner_file[strcspn(of_joiner_file, ":")] = 45;
         of_joiner_file[strcspn(of_joiner_file, "\n")] = 0;
+     }
+     else if(option_to_operate[0] == 52 && has_opened == 1)  {
+        sprintf(spl_file_name, "%c%s%s", 91, asctime(tm)," - SPLIT.txt");
+        spl_file_name[strcspn(spl_file_name, "\n")] = 93;
+        spl_file_name[strcspn(spl_file_name, ":")] = 45;
+        spl_file_name[strcspn(spl_file_name, ":")] = 45;
+        spl_file_name[strcspn(spl_file_name, "\n")] = 0;
     }
 
     int fdes,of_gmail, of_yahoo, of_aol, of_hotmail, of_outlook, of_else, fdes_joiner;
+
+    int fdes_spl;
 
     if(has_opened == 1 && option_to_operate[0] == 49)   {
 
@@ -188,6 +205,9 @@ int main(int argc, char const *argv[]) {
     if(has_opened == 1 && option_to_operate[0] == 51) {
     fdes = open(output_file_name, O_WRONLY|O_CREAT,S_IRUSR+S_IWUSR+S_IRGRP+S_IROTH);
     }
+    // if(has_opened == 1 && option_to_operate[0] == 51)   {
+    //     fdes_spl = open(of_else_file, O_WRONLY|O_CREAT,S_IRUSR+S_IWUSR+S_IRGRP+S_IROTH);
+    // }
 
 
     while( !feof(fp) && has_opened == 1 && ( option_to_operate[0] == 51 || option_to_operate[0] == 49))  {
@@ -217,7 +237,65 @@ int main(int argc, char const *argv[]) {
     if(option_to_operate[0] == 51)  {
     fclose(fp); close(fdes);
     }
-
+    /*spliter*/
+    int num_to_spl = 0, num_of_lines = 0, default_spl_val = 0;
+    
+    while( !feof(fp) && has_opened == 1 && ( option_to_operate[0] == 52) && spl == 1)    {
+        int flag = 0;
+        while( flag != 1)   {
+            ch = fgetc(fp);
+            if(ch == '\n' || ch == -1){
+                num_of_lines++;
+                flag = 1;
+            }
+        }
+    }
+    int yeeeeeeeeeeeet = 0;
+    default_spl_val = num_of_lines/2;
+    printf("[CombNinja] Total lines: <%d>.", num_of_lines);
+    printf("[CombNinja] We will split it to <2> files each file will have <%d> lines.", default_spl_val);
+    fp = 0;
+    fp = fopen(input_file_name, "r");
+    ch = (char) 0;
+    int next_half = 0;
+    fdes_spl = open("1st.txt", O_WRONLY|O_CREAT,S_IRUSR+S_IWUSR+S_IRGRP+S_IROTH);
+    while( !feof(fp) && has_opened == 1 && ( option_to_operate[0] == 52) && spl == 1 && (yeeeeeeeeeeeet < default_spl_val))    {
+        int flag = 0;
+        while( flag != 1)   {
+            ch = fgetc(fp);
+            if( ch == '\n' || ch == -1) {
+                flag = 1;
+                ch = (char) 0;
+            }
+            comb[loop_index] = ch;
+            loop_index++;
+        }
+        combs_splitter(comb, fdes_spl);
+        strcpy(comb, "");
+        loop_index = 0;
+        yeeeeeeeeeeeet++;
+        next_half = 1;
+    }   
+        close(fdes_spl);
+        fdes_spl = open("2nd.txt", O_WRONLY|O_CREAT,S_IRUSR+S_IWUSR+S_IRGRP+S_IROTH);
+        while( !feof(fp) && has_opened == 1 && ( option_to_operate[0] == 52) && spl == 1 && (next_half == 1))    {
+        int flag = 0;
+        while( flag != 1)   {
+            ch = fgetc(fp);
+            if( ch == '\n' || ch == -1) {
+                flag = 1;
+                ch = (char) 0;
+            }
+            comb[loop_index] = ch;
+            loop_index++;
+        }
+        combs_splitter(comb, fdes_spl);
+        strcpy(comb, "");
+        loop_index = 0;
+        yeeeeeeeeeeeet++;
+        next_half = 1;
+    }
+    fclose(fp); close(fdes_spl);
     /*joiner start*/
     int num_to_join = 0;
     if(option_to_operate[0] == 50 && joiner == 1)   {
@@ -375,6 +453,14 @@ void domain_classifier(char *comb, int of_gmail, int of_yahoo, int of_aol, int o
 
     strcpy(parsed_comb, "");
     runs++;
+}
+/*spl*/
+void combs_splitter(char *comb, int fdes)   {
+    int r, runs = 0;
+    char splt_comb[256];
+
+    sprintf(splt_comb, "%s%c", comb, '\n');
+    r = write(fdes, splt_comb, strlen(splt_comb));
 }
 /**This might be not useful for others but I made it cuz I needed it back then =D*/
 void hash_fixer(char *comb, int fdes)   {
